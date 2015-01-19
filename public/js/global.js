@@ -14,7 +14,13 @@ $(document).ready(function() {
       updateRecipe(validated);
     }
   });
-  $("#recipe-editdelete").click(function() { $("#overlay").show(); });
+  $("#recipe-editdelete").click(function() {
+    if ($("#recipe-full-title").attr("name") < 0) {
+      notify("nop");
+    } else {
+      $("#overlay").show();
+    }
+  });
   $("#dialog-yes").click(deleteRecipe);
   $(".dialog-option").click(function() { $("#overlay").hide(); });
 
@@ -426,7 +432,21 @@ var insertRecipe = function(validated) {
 
 /******** RECIPE DELETE ********/
 var deleteRecipe = function() {
-  notify("Coming soon!");
+  $.ajax({
+    type: "POST",
+    url: "/recipe_delete.php",
+    data: { recipe_id: $("#recipe-full-title").attr("name") },
+    dataType: "json"
+  }).done(function(deleteId) {
+    if (isNaN(deleteId)) {
+      notify(deleteId);
+      return;
+    }
+    $("#" + deleteId).remove();
+    $("#recipe-ribbon-right").find("[name='" + deleteId + "']").remove();
+    select(-1);
+    notify("&check;");
+  });
 };
 
 /******** RECIPE UPDATE ********/
