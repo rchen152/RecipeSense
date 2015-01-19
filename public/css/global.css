@@ -1,0 +1,206 @@
+html, body {
+  height: 100%;
+}
+
+body {
+  background: linear-gradient(#990000, white) no-repeat;
+  margin: 0;
+}
+
+.radial {
+  background: radial-gradient(#ffccff, transparent);
+  color: #000000;
+}
+
+.title {
+  font-size: large;
+}
+
+.subtitle {
+  font-style: italic;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.pinnable:hover {
+  font-weight: bold;
+}
+
+ul, ol {
+  padding-left: 1.2em;
+}
+
+ul {
+  list-style: circle;
+}
+
+/******** LOGO ********/
+
+@font-face {
+  font-family: Yesteryear;
+  src: url(yesteryear.ttf)
+}
+
+.logo {
+  font-family: Yesteryear, Times New Roman, serif;
+  font-size: 300%;
+  position: fixed;
+  top: -45px;
+  overflow: hidden;
+  z-index: 16;
+}
+
+#logo-left {
+  right: 74.5%;
+  color: #000000;
+}
+
+#logo-right {
+  left: 25.5%;
+  color: #ffccff;
+}
+
+#logo-left-text {
+  position: relative;
+  left: 15px;
+}
+
+
+#logo-right-text {
+  position: relative;
+  left: -15px;
+}
+
+/******** RECIPE RIBBON ********/
+
+#recipe-ribbon {
+  margin-left: 1%;
+  width: 49%;
+  float: left;
+}
+
+.recipe-ribbon-part {
+  width: 50%;
+  position: relative;
+  padding-top: 45px;
+  padding-bottom: 45px;
+  overflow: hidden;
+}
+
+#recipe-ribbon-left {
+  border-radius: 0 0 45px 45px;
+  text-align: right;
+  float: left;
+}
+
+#recipe-ribbon-right {
+  text-align: left;
+  color: #ffccff;
+}
+
+.recipe-part {
+  position: relative;
+  z-index: 42;
+  padding-left: 10px;
+  padding-right: 10px;
+  white-space: nowrap;
+}
+
+.recipe-name {
+  text-decoration: none;
+  color: inherit;
+  border-radius: 10px 0 0 10px;
+}
+
+.recipe-profile {
+  border-radius: 0 10px 10px 0;
+  background: #990000;
+  visibility: hidden;
+}
+
+/******** RECIPE FULL ********/
+
+#recipe-full {
+  margin-left: 50%;
+  width: 49%;
+  height: 80%;
+  background: rgba(255, 182, 255, 0.4);
+  position: fixed;
+  top: 45px;
+  border-radius: 45px;
+  padding-bottom: 45px;
+  overflow-x: hidden;
+}
+
+#recipe-full-title {
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.recipe-full-profile {
+  width: 32%;
+  display: inline-block;
+  margin-right: 1%;
+  vertical-align: top;
+}
+
+#recipe-prep {
+  margin-left: 1%;
+}
+
+.recipe-detail-part {
+  margin-right: 1%;
+  float: left;
+}
+
+#recipe-ingredients {
+  margin-left: 1%;
+  width: 32%;
+}
+
+#recipe-instructions {
+  width: 65%;
+}
+
+/******** RECIPE EDIT MODE ********/
+
+#recipe-editmode-wrapper {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 42;
+}
+
+.recipe-editmode {
+  float: right;
+}
+
+#recipe-edittoggle {
+  margin-right: 1%;
+  padding: 18px;
+  border-radius: 0 0 18px 18px;
+}
+
+#recipe-editupdate {
+  padding: 5px;
+  border-radius: 0 0 5px 5px;
+}
+
+#recipe-editnotice {
+  padding: 5px;
+  font-weight: bold;
+}
+
+/******** BYLINE ********/
+
+#byline {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  font-size: small;
+  color: #660000;
+  margin-right: 1%;
+}
