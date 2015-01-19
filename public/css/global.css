@@ -73,6 +73,40 @@ ul {
   left: -15px;
 }
 
+/******** DIALOG BOX ********/
+
+#overlay {
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 204, 255, 0.5);
+  position: fixed;
+  z-index: 43;
+  display: table;
+}
+
+#dialog-wrapper {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
+
+#dialog-wrapper div {
+  display: inline-block;
+  padding: 20px 30px 20px 30px;
+  background: radial-gradient(#ffccff, #990000);
+  border: 5px outset #660000;
+  border-radius: 10px 10px 10px 10px;
+}
+
+#dialog-prompt {
+  margin-bottom: 10px;
+  display: block;
+}
+
+#dialog-yes {
+  margin-right: 20px;
+}
+
 /******** RECIPE RIBBON ********/
 
 #recipe-ribbon {
@@ -184,13 +218,12 @@ ul {
   border-radius: 0 0 18px 18px;
 }
 
-#recipe-editupdate {
+.recipe-editsub {
   padding: 5px;
   border-radius: 0 0 5px 5px;
 }
 
 #recipe-editnotice {
-  padding: 5px;
   font-weight: bold;
 }
 

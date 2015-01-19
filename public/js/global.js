@@ -1,5 +1,6 @@
 $(document).ready(function() {
   initNameAndProfile(".recipe-name", ".recipe-profile");
+
   $("#recipe-edittoggle").click(toggleEditMode);
   $("#recipe-editupdate").click(function() {
     var validated = validateEdits();
@@ -13,6 +14,10 @@ $(document).ready(function() {
       updateRecipe(validated);
     }
   });
+  $("#recipe-editdelete").click(function() { $("#overlay").show(); });
+  $("#dialog-yes").click(deleteRecipe);
+  $(".dialog-option").click(function() { $("#overlay").hide(); });
+
   $(".editable").attr("onpaste", "sanitizePaste(event)");
   $(".singleline").keypress(function(event) { return event.which !== 13; });
   $(".noface").hide();
@@ -237,12 +242,12 @@ var toggleEditMode = function() {
   if (!$("#recipe-edittoggle").hasClass("on")) {
     $("#recipe-edittoggle").addClass("on").css("background", "#ffccff")
                            .css("font-weight", "bold");
-    $("#recipe-editupdate").show();
-    $("#recipe-editnotice").text("").show();
+    $("#recipe-editnotice").text("");
+    $("#recipe-editupdate, #recipe-editdelete, #recipe-editnotice").show();
     editModeOn();
   } else {
     $("#recipe-edittoggle").removeClass("on").removeAttr("style");
-    $("#recipe-editupdate, #recipe-editnotice").hide();
+    $("#recipe-editupdate, #recipe-editdelete, #recipe-editnotice").hide();
     editModeOff();
   }
 };
@@ -417,6 +422,11 @@ var insertRecipe = function(validated) {
     select(updated.id);
     notify("&check;");
   });
+};
+
+/******** RECIPE DELETE ********/
+var deleteRecipe = function() {
+  notify("Coming soon!");
 };
 
 /******** RECIPE UPDATE ********/

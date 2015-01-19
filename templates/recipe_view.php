@@ -98,8 +98,12 @@
     EditMode
   </span>
   <span id="recipe-editupdate" 
-        class="recipe-editmode radial title clickable noface">
+        class="recipe-editmode recipe-editsub radial title clickable noface">
     Update
   </span>
-  <span id="recipe-editnotice" class="recipe-editmode"></span>
+  <span id="recipe-editdelete"
+        class="recipe-editmode recipe-editsub radial title clickable noface">
+    Delete
+  </span>
+  <span id="recipe-editnotice" class="recipe-editmode recipe-editsub"></span>
 </div>
