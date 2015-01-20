@@ -1,4 +1,8 @@
 $(document).ready(function() {
+  $(".logo").click(function() {
+    $(location).attr("href", "");
+  });
+
   initNameAndProfile(".recipe-name", ".recipe-profile");
 
   $("#recipe-edittoggle").click(toggleEditMode);

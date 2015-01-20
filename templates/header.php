@@ -6,8 +6,12 @@
     <script src="/js/global.js"></script>
   </head>
   <body>
-    <div id="logo-left" class="logo"><p id="logo-left-text">RecipeS</p></div>
-    <div id="logo-right" class="logo"><p id="logo-right-text">Sense</p></div>
+    <div id="logo-left" class="logo clickable">
+      <span id="logo-left-text">RecipeS</span>
+    </div>
+    <div id="logo-right" class="logo clickable">
+      <span id="logo-right-text">Sense</span>
+    </div>
     <div id="overlay" class="noface"><div id="dialog-wrapper">
       <div>
         <span id="dialog-prompt" class="title">Confirm delete?</span>

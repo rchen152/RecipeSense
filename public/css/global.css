@@ -47,9 +47,8 @@ ul {
   font-family: Yesteryear, Times New Roman, serif;
   font-size: 300%;
   position: fixed;
-  top: -45px;
   overflow: hidden;
-  z-index: 16;
+  z-index: 43;
 }
 
 #logo-left {
@@ -80,7 +79,7 @@ ul {
   height: 100%;
   background: rgba(255, 204, 255, 0.5);
   position: fixed;
-  z-index: 43;
+  z-index: 44;
   display: table;
 }
 
@@ -118,13 +117,13 @@ ul {
 .recipe-ribbon-part {
   width: 50%;
   position: relative;
-  padding-top: 45px;
-  padding-bottom: 45px;
+  padding-top: 55px;
+  padding-bottom: 55px;
   overflow: hidden;
 }
 
 #recipe-ribbon-left {
-  border-radius: 0 0 45px 45px;
+  border-radius: 0 0 55px 55px;
   text-align: right;
   float: left;
 }
@@ -162,9 +161,9 @@ ul {
   height: 80%;
   background: rgba(255, 182, 255, 0.4);
   position: fixed;
-  top: 45px;
-  border-radius: 45px;
-  padding-bottom: 45px;
+  top: 55px;
+  border-radius: 55px;
+  padding-bottom: 55px;
   overflow-x: hidden;
 }
 
@@ -214,8 +213,8 @@ ul {
 
 #recipe-edittoggle {
   margin-right: 1%;
-  padding: 18px;
-  border-radius: 0 0 18px 18px;
+  padding: 10px;
+  border-radius: 0 0 10px 10px;
 }
 
 .recipe-editsub {
