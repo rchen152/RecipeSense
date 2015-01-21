@@ -22,11 +22,11 @@ $(document).ready(function() {
     if ($("#recipe-full-title").attr("name") < 0) {
       notify("nop");
     } else {
-      $("#overlay").show();
+      $("#overlay-delete").show();
     }
   });
-  $("#dialog-yes").click(deleteRecipe);
-  $(".dialog-option").click(function() { $("#overlay").hide(); });
+  $("#dialog-delete-yes").click(deleteRecipe);
+  $(".dialog-delete").click(function() { $("#overlay-delete").hide(); });
 
   $(".editable").attr("onpaste", "sanitizePaste(event)");
   $(".singleline").keypress(function(event) { return event.which !== 13; });
@@ -40,6 +40,13 @@ $(document).ready(function() {
       }
       autocompleteIngredient();
     }
+  });
+  $("#recipe-ingredient-insert").mousedown(function() {
+    showIngredientInsertDialog();
+  });
+  $("#dialog-ingredient-insert-yes").click(insertIngredient);
+  $(".dialog-ingredient-insert").click(function() {
+    $("#overlay-ingredient-insert").hide();
   });
 
   $(".noface").hide();
@@ -369,6 +376,37 @@ var commonPrefix = function(ingredients) {
     }
   }
   return min.length < max.length ? min : max;
+};
+
+/******** INGREDIENT INSERT ********/
+var showIngredientInsertDialog = function() {
+  $("#overlay-ingredient-insert").show();
+  var ingredient = normalize(window.getSelection().toString());
+  $("#ingredient-insert-name").val(ingredient);
+  $("#ingredient-insert-plural").val("");
+}
+
+var insertIngredient = function() {
+  var ingredient = {
+    name: normalize($("#ingredient-insert-name").val())
+  };
+  if (!ingredient.name) {
+    notify("empty ingredient name");
+    return;
+  }
+  var plural = normalize($("#ingredient-insert-plural").val());
+  if (plural) {
+    ingredient.plural = plural;
+  }
+
+  $.ajax({
+    type: "POST",
+    url: "/ingredient_insert.php",
+    data: { ingredient: ingredient },
+    dataType: "json"
+  }).done(function(status) {
+    notify(status);
+  });
 };
 
 /******** RECIPE PRE-PARSE ********/

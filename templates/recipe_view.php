@@ -110,3 +110,25 @@
   </span>
   <span id="recipe-editnotice" class="recipe-editmode recipe-editsub"></span>
 </div>
+<div id="overlay-delete" class="overlay noface"><div class="dialog-wrapper">
+  <div class="dialog">
+    <span class="dialog-prompt title">Confirm delete?</span>
+    <span id="dialog-delete-yes"
+      class="dialog-delete dialog-yes clickable">Yes</span
+    ><span class="dialog-delete clickable">No</span>
+  </div>
+</div></div>
+<div id="overlay-ingredient-insert" class="overlay noface">
+  <div class="dialog-wrapper"><div class="dialog">
+    <span class="dialog-prompt title">Insert ingredient?</span>
+    <div class="dialog-prompt title">
+      <span>Name:</span> <input id="ingredient-insert-name" type="text" />
+    </div>
+    <div class="dialog-prompt title">
+      <span>Plural:</span> <input id="ingredient-insert-plural" type="text" />
+    </div>
+    <span id="dialog-ingredient-insert-yes"
+      class="dialog-ingredient-insert dialog-yes clickable">Yes</span
+    ><span class="dialog-ingredient-insert clickable">No</span>
+  </div></div>
+</div>
