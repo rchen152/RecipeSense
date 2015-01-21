@@ -16,6 +16,6 @@
     "SELECT unit.id, unit.name, unit.plural, unit.abbreviation FROM ".
     "unit INNER JOIN unit_type ON unit.unit_type_id = unit_type.id ".
     "WHERE unit_type.name = 'time'");
-  $_SESSION["ingredients"] = array();
+  set_ingredient_ids();
   set_recipe_ingredient_group_ids();
 ?>

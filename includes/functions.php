@@ -80,15 +80,25 @@
   }
 
   /**
+   * Populates an array of ingredients
+  **/
+  function set_ingredient_ids() {
+    $result = query("SELECT id, name, plural FROM ingredient");
+    $_SESSION["ingredients"] = array();
+    foreach ($result as $ingredient) {
+      $_SESSION["ingredients"][$ingredient["name"]] = $ingredient["id"];
+      if (isset($ingredient["plural"])) {
+        $_SESSION["ingredients"][$ingredient["plural"]] = $ingredient["id"];
+      }
+    }
+  }
+
+  /**
    * Gets the id for the given ingredient, -1 if not found.
   **/
   function get_ingredient_id($name) {
     if (!isset($_SESSION["ingredients"][$name])) {
-      $result = query("SELECT id FROM ingredient WHERE name = ?", [$name]);
-      if (!count($result)) {
-        return -1;
-      }
-      $_SESSION["ingredients"][$name] = $result[0]["id"];
+      return -1;
     }
     return $_SESSION["ingredients"][$name];
   }
