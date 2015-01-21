@@ -30,6 +30,18 @@ $(document).ready(function() {
 
   $(".editable").attr("onpaste", "sanitizePaste(event)");
   $(".singleline").keypress(function(event) { return event.which !== 13; });
+  $("#recipe-ingredients-items").keydown(function(event) {
+    if (event.ctrlKey && event.shiftKey && event.which === 190) {
+      if (event.preventDefault) {
+        event.preventDefault();
+      }
+      if (event.stopPropagation) {
+        event.stopPropagation();
+      }
+      autocompleteIngredient();
+    }
+  });
+
   $(".noface").hide();
 });
 
@@ -253,11 +265,13 @@ var toggleEditMode = function() {
     $("#recipe-edittoggle").addClass("on").css("background", "#ffccff")
                            .css("font-weight", "bold");
     $("#recipe-editnotice").text("");
-    $("#recipe-editupdate, #recipe-editdelete, #recipe-editnotice").show();
+    $("#recipe-editupdate, #recipe-editdelete, #recipe-editnotice, " +
+      "#recipe-ingredient-insert").show();
     editModeOn();
   } else {
     $("#recipe-edittoggle").removeClass("on").removeAttr("style");
-    $("#recipe-editupdate, #recipe-editdelete, #recipe-editnotice").hide();
+    $("#recipe-editupdate, #recipe-editdelete, #recipe-editnotice, " +
+      "#recipe-ingredient-insert").hide();
     editModeOff();
   }
 };
@@ -299,20 +313,62 @@ var sanitizePaste = function(event) {
     return;
   }
 
-  if (window.getSelection) {
-    var selection = window.getSelection();
-    if (selection.rangeCount) {
-      var range = selection.getRangeAt(0);
-      range.deleteContents();
-      var textNode = document.createTextNode(text);
-      range.insertNode(textNode);
-      range.setStartAfter(textNode);
-      selection.removeAllRanges();
-      selection.addRange(range);
-      return;
+  var selection = window.getSelection();
+  var range = selection.getRangeAt(0);
+  replaceWithText(selection, range, text);
+};
+
+var replaceWithText = function(selection, range, text) {
+  range.deleteContents();
+  var textNode = document.createTextNode(text);
+  range.insertNode(textNode);
+  range.setStartAfter(textNode);
+  selection.removeAllRanges();
+  selection.addRange(range);
+};
+
+/******** INGREDIENT AUTOCOMPLETE ********/
+
+var autocompleteIngredient = function() {
+  var selection = window.getSelection();
+  var range = selection.getRangeAt(0);
+  var prefix = range.toString();
+
+  $.ajax({
+    type: "POST",
+    url: "/ingredients_find.php",
+    data: { prefix: prefix },
+    dataType: "json"
+  }).done(function(ingredients) {
+    var ingredientPrefix = commonPrefix(ingredients);
+    if (ingredientPrefix.length >= prefix.length) {
+      replaceWithText(selection, range, ingredientPrefix);
+      notify("&check;");
+    } else {
+      notify("unknown ingredient prefix: " + prefix);
+    }
+  });
+};
+
+var commonPrefix = function(ingredients) {
+  if (ingredients.length < 1) {
+    return "";
+  }
+  var min = ingredients[0], max = ingredients[0];
+  for (var i = 1; i < ingredients.length; ++i) {
+    if (ingredients[i] < min) {
+      min = ingredients[i];
+    }
+    if (ingredients[i] > max) {
+      max = ingredients[i];
     }
   }
-  notify("selection unavailable");
+  for (var i = 0, n = Math.min(min.length, max.length); i < n; ++i) {
+    if (min.charAt(i) !== max.charAt(i)) {
+      return min.substring(0, i);
+    }
+  }
+  return min.length < max.length ? min : max;
 };
 
 /******** RECIPE PRE-PARSE ********/
@@ -513,7 +569,7 @@ var parseIngredients = function() {
       var text = normalize(node.nodeValue);
       if (text) {
         var start = text.charAt(0);
-        if (start === '>' || start === '-') {
+        if (start === '>') {
           text = normalize(text.substring(1));
           if (text) {
             ingredient = parseIngredient(text);

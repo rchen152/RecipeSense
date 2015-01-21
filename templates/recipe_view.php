@@ -81,6 +81,9 @@
   </div>
   <div id="recipe-ingredients" class="recipe-detail-part noface">
     <span class="title">Ingredients</span>
+    <span id="recipe-ingredient-insert" class="title clickable noface">
+      &plus;
+    </span>
     <div id="recipe-ingredients-items" class="editable">
     </div>
   </div>
