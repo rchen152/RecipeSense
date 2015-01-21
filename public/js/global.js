@@ -588,17 +588,18 @@ var loadUpdatedData = function(updated) {
   showRecipeDetail(updated.id, true);
 };
 
-/******** UPDATE INGREDIENTS ********/
-
-var nodeText = function(node) {
+var nodeText = function(node, keepCase) {
   return normalize(
-    node.nodeType === Node.TEXT_NODE ? node.nodeValue : $(node).text());
+    node.nodeType === Node.TEXT_NODE ? node.nodeValue : $(node).text(),
+    keepCase);
 };
 
 var delimiterNode = function(node) {
   return /div/i.test(node.nodeName) || /br/i.test(node.nodeName) ||
     /p/i.test(node.nodeName);
 };
+
+/******** UPDATE INGREDIENTS ********/
 
 var fixIngredientsTail = function(ingredients, groupName) {
   var tail = ingredients[ingredients.length - 1];
@@ -625,21 +626,22 @@ var parseIngredients = function() {
   var appendTo = false;
   while (nodes.length) {
     var node = nodes.shift();
-    if (node === false) {
+    if (node === false || delimiterNode(node)) {
       var status = fixIngredientsTail(ingredients, groupName);
       if (typeof status === typeof "") {
         return status;
       }
       appendTo = false;
+      if (node !== false) {
+        nodes.unshift(false);
+        nodes = Array.prototype.slice.call(node.childNodes).concat(nodes);
+      }
     } else if (/ul/i.test(node.nodeName)) {
       var group = parseIngredientGroup(node, groupName);
       if (typeof group === typeof "") {
         return group;
       }
       ingredients = ingredients.concat(group);
-    } else if (delimiterNode(node)) {
-      nodes.unshift(false);
-      nodes = Array.prototype.slice.call(node.childNodes).concat(nodes);
     } else {
       var text = nodeText(node);
       if (text) {
@@ -700,39 +702,55 @@ var parseIngredient = function(ingredient, groupName) {
 
 /******** UPDATE INSTRUCTIONS ********/
 
+var fixInstructionsTail = function(instructions) {
+  if (!instructions.length) {
+    return;
+  }
+  var tail = instructions[instructions.length - 1];
+  tail.description = normalize(tail.description, true);
+  if (!tail.description) {
+    instructions.splice(instructions.length - 1, 1);
+  }
+};
+
 var parseInstructions = function() {
   var nodes = Array.prototype.slice.call(
     $("#recipe-instructions-items").prop("childNodes"));
   var instructions = [];
   var instructionNumber = 1;
-  while (nodes.length > 0) {
+  var append = false;
+  while (nodes.length) {
     var node = nodes.shift();
-    if (/ol/i.test(node.nodeName)) {
+    if (node === false || delimiterNode(node)) {
+      fixInstructionsTail(instructions);
+      append = false;
+      if (node !== false) {
+        nodes.unshift(false);
+        nodes = Array.prototype.slice.call(node.childNodes).concat(nodes);
+      }
+    } else if (/ol/i.test(node.nodeName)) {
       var group = parseInstructionGroup(node, instructionNumber);
       instructions = instructions.concat(group);
       instructionNumber += group.length;
-    } else if (node.nodeType === Node.TEXT_NODE) {
-      var text = normalize(node.nodeValue, true);
-      var step = /^\d+\./.test(text);
-      if (step) {
-        text = normalize(text.substring(text.indexOf(".") + 1), true);
-      }
+    } else {
+      var text = nodeText(node, true);
       if (text) {
-        if (step || !instructions.length ||
-            instructions[instructions.length - 1].show_number) {
+        if (!append) {
+          var step = /^\d+\./.test(text);
           instructions[instructions.length] = {
             number: instructionNumber++,
             show_number: step ? 1 : 0,
-            description: text
+            description: step ?
+              normalize(text.substring(text.indexOf(".") + 1), true) : text
           };
+          append = true;
         } else {
           instructions[instructions.length - 1].description += " " + text;
         }
       }
-    } else {
-      nodes = Array.prototype.slice.call(node.childNodes).concat(nodes);
     }
   }
+  fixInstructionsTail(instructions);
   return instructions;
 };
 
@@ -740,7 +758,7 @@ var parseInstructionGroup = function(ol, startNumber) {
   var group = [];
   var nodes = $(ol).children();
   for (var i = 0; i < nodes.length; ++i) {
-    var text = normalize($(nodes[i]).text(), true);
+    var text = nodeText(nodes[i], true);
     if (text) {
       group[group.length] = {
         number: startNumber++,
