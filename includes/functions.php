@@ -57,9 +57,13 @@
   function set_unit_ids($unit_arr, $query) {
     $result = query($query);
     $_SESSION[$unit_arr] = array();
+    $categories = array("name", "plural", "abbreviation");
     foreach ($result as $unit) {
-      $_SESSION[$unit_arr][$unit["name"]] = $unit["id"];
-      $_SESSION[$unit_arr][$unit["abbreviation"]] = $unit["id"];
+      foreach ($categories as $category) {
+        if (isset($unit[$category])) {
+          $_SESSION[$unit_arr][$unit[$category]] = $unit["id"];
+        }
+      }
     }
   }
 
