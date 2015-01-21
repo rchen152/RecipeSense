@@ -339,7 +339,7 @@ var replaceWithText = function(selection, range, text) {
 var autocompleteIngredient = function() {
   var selection = window.getSelection();
   var range = selection.getRangeAt(0);
-  var prefix = range.toString();
+  var prefix = normalize(range.toString());
 
   $.ajax({
     type: "POST",
@@ -590,73 +590,108 @@ var loadUpdatedData = function(updated) {
 
 /******** UPDATE INGREDIENTS ********/
 
+var nodeText = function(node) {
+  return normalize(
+    node.nodeType === Node.TEXT_NODE ? node.nodeValue : $(node).text());
+};
+
+var delimiterNode = function(node) {
+  return /div/i.test(node.nodeName) || /br/i.test(node.nodeName) ||
+    /p/i.test(node.nodeName);
+};
+
+var fixIngredientsTail = function(ingredients, groupName) {
+  var tail = ingredients[ingredients.length - 1];
+  if (typeof tail !== typeof "") {
+    return;
+  }
+  tail = normalize(tail);
+  if (!tail) {
+    ingredients.splice(ingredients.length - 1, 1);
+    return;
+  }
+  ingredient = parseIngredient(tail, groupName);
+  if (typeof ingredient === typeof "") {
+    return ingredient;
+  }
+  ingredients[ingredients.length - 1] = ingredient;
+};
+
 var parseIngredients = function() {
   var nodes = Array.prototype.slice.call(
     $("#recipe-ingredients-items").prop("childNodes"));
   var ingredients = [];
   var groupName = "none";
-  while (nodes.length > 0) {
+  var appendTo = false;
+  while (nodes.length) {
     var node = nodes.shift();
-    if (/ul/i.test(node.nodeName)) {
+    if (node === false) {
+      var status = fixIngredientsTail(ingredients, groupName);
+      if (typeof status === typeof "") {
+        return status;
+      }
+      appendTo = false;
+    } else if (/ul/i.test(node.nodeName)) {
       var group = parseIngredientGroup(node, groupName);
       if (typeof group === typeof "") {
         return group;
       }
       ingredients = ingredients.concat(group);
-    } else if (node.nodeType === Node.TEXT_NODE) {
-      var text = normalize(node.nodeValue);
+    } else if (delimiterNode(node)) {
+      nodes.unshift(false);
+      nodes = Array.prototype.slice.call(node.childNodes).concat(nodes);
+    } else {
+      var text = nodeText(node);
       if (text) {
-        var start = text.charAt(0);
-        if (start === '>') {
-          text = normalize(text.substring(1));
-          if (text) {
-            ingredient = parseIngredient(text);
-            if (typeof ingredient === typeof "") {
-              return ingredient;
-            }
-            ingredient.group_name = groupName;
-            ingredients[ingredients.length] = ingredient;
+        if (appendTo === false) {
+          if (text.charAt(0) === '>') {
+            ingredients[ingredients.length] = normalize(text.substring(1));
+            appendTo = 1;
+          } else {
+            groupName = text;
+            appendTo = 2;
           }
+        } else if (appendTo === 1) {
+          ingredients[ingredients.length - 1] += " " + text;
         } else {
-          groupName = text;
+          groupName += " " + text;
         }
       }
-    } else {
-      nodes = Array.prototype.slice.call(node.childNodes).concat(nodes);
     }
   }
-  return ingredients;
+  var status = fixIngredientsTail(ingredients, groupName);
+  return typeof status === typeof "" ? status : ingredients;
 };
 
 var parseIngredientGroup = function(ul, groupName) {
   var group = [];
   var nodes = $(ul).children();
   for (var i = 0; i < nodes.length; ++i) {
-    var text = normalize($(nodes[i]).text());
+    var text = nodeText(nodes[i]);
     if (text) {
-      ingredient = parseIngredient(text);
+      ingredient = parseIngredient(text, groupName);
       if (typeof ingredient === typeof "") {
         return ingredient;
       }
-      ingredient.group_name = groupName;
       group[group.length] = ingredient;
     }
   }
   return group;
 };
 
-var parseIngredient = function(ingredient) {
+var parseIngredient = function(ingredient, groupName) {
   var ingredientArr = ingredient.split(" ");
   switch (ingredientArr.length) {
     case 0: case 1: {
       return "bad ingredient: " + ingredient;
     } default: {
-      if (!numExp(ingredientArr[0])) {
+      if (!numExp(ingredientArr[0]) || +ingredientArr[0] <= 0) {
         return "bad ingredient quantity: " + ingredientArr[0];
       } else {
         return {
           quantity: ingredientArr[0],
-          description: ingredientArr.slice(1).join(" ")
+          description: ingredientArr.slice(1).join(" "),
+          group_name: groupName
         };
       }
     }
