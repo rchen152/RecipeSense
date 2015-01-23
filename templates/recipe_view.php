@@ -96,6 +96,8 @@
   <div id="recipe-instructions-items-back" class="noface"></div>
 </div>
 <div id="recipe-editmode-wrapper">
+  <span id="recipe-edithelpme"
+        class="recipe-editmode recipe-editsub clickable">?</span>
   <span id="recipe-edittoggle"
         class="recipe-editmode radial title clickable pinnable">
     EditMode

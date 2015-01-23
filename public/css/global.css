@@ -216,6 +216,11 @@ ul {
   float: right;
 }
 
+#recipe-edithelpme {
+  margin-right: 1%;
+  font-weight: bold;
+}
+
 #recipe-edittoggle {
   margin-right: 1%;
   padding: 10px;
