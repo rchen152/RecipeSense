@@ -95,7 +95,6 @@ var select = function(recipeId) {
     $("#" + recipeId).addClass("selected").css("background", "#ffccff")
                      .css("font-weight", "bold");
   }
-  showProfile(recipeId);
   showRecipeDetail(recipeId, recipeId < 0);
 };
 
@@ -524,8 +523,8 @@ var insertRecipe = function(validated) {
     initNameAndProfile("#" + insertId, "#recipe-ribbon-right span:last");
     validated.id = insertId;
     updateRecipe(validated);
-    showProfile(insertId);
     select(insertId);
+    showProfile(insertId);
   });
 };
 
