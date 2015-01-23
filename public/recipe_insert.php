@@ -59,97 +59,13 @@
     }
     $query_str = substr($query_str, 0, -2) . ")";
     if (query($query_str, $parameters) === false) {
-      echo json_encode("profile insert failure");
+      echo json_encode("recipe insert failure");
       return;
     }
     $query_str = "";
     $parameters = array();
-    $_POST["recipe"]["id"] =
-      query("SELECT LAST_INSERT_ID()")[0]["LAST_INSERT_ID()"];
 
-    /******** INSERT RECIPE INGREDIENTS ********/
-
-    if (isset($_POST["recipe"]["ingredients"]) &&
-        is_array($_POST["recipe"]["ingredients"])) {
-      $query_str = "INSERT INTO recipe_ingredient ".
-        "(quantity, unit_id, ingredient_id, ".
-        "recipe_ingredient_group_id, recipe_id) VALUES ";
-      foreach ($_POST["recipe"]["ingredients"] as $ingredient) {
-        $query_str .= "(?, ";
-        $description_arr = explode(" ", $ingredient["description"]);
-
-        // Quantity + unit + name
-        $name = implode(" ", array_slice($description_arr, 1));
-        $unit_id = get_unit_id($description_arr[0], "ingredient");
-        $id = get_ingredient_id($name);
-
-        // Quantity + name
-        if ($unit_id < 0 || $id < 0) {
-          $id = get_ingredient_id($ingredient["description"]);
-        }
-        if ($id < 0) {
-          echo json_encode(
-            "unrecognized ingredient: ".$ingredient["description"]);
-          return;
-        }
-
-        $group_id = get_recipe_ingredient_group_id($ingredient["group_name"]);
-        if ($group_id < 0) {
-          echo json_encode(
-            "bad ingredient group: ".$ingredient["group_name"]);
-        }
-
-        // Quantity
-        $parameters[] = $ingredient["quantity"];
-
-        // Unit id
-        if ($unit_id >= 0) {
-          $query_str .= "?, ";
-          $parameters[] = $unit_id;
-        } else {
-          $query_str .= "NULL, ";
-        }
-
-        // Ingredient id, recipe ingredient group id, recipe id
-        $query_str .= "?, ?, ?), ";
-        array_push($parameters, $id, $group_id, $_POST["recipe"]["id"]);
-      }
-
-      // Execute query
-      $query_str = substr($query_str, 0, -2);
-      if (query($query_str, $parameters) === false) {
-        echo json_encode("ingredient insert failure");
-        return;
-      }
-      $query_str = "";
-      $parameters = array();
-    }
-
-    /******** INSERT RECIPE INSTRUCTIONS ********/
-
-    if (isset($_POST["recipe"]["instructions"]) &&
-        is_array($_POST["recipe"]["instructions"]) &&
-        count($_POST["recipe"]["instructions"]) > 0) {
-      $query_str = "INSERT INTO recipe_instruction ".
-        "(number, show_number, description, recipe_id) VALUES ";
-      foreach ($_POST["recipe"]["instructions"] as $instruction) {
-        $query_str .= "(?, ?, ?, ?), ";
-        array_push($parameters, $instruction["number"],
-          $instruction["show_number"], $instruction["description"],
-          $_POST["recipe"]["id"]);
-      }
-      $query_str = substr($query_str, 0, -2);
-
-      // Execute query
-      if (query($query_str, $parameters) === false) {
-        echo json_encode("instruction insert failure");
-        return;
-      }
-      $query_str = "";
-      $parameters = array();
-    }
-
-    // Return updated profile
-    echo json_encode(get_recipe_profile($_POST["recipe"]["id"])[0]);
+    // Return insert id
+    echo json_encode(query("SELECT LAST_INSERT_ID()")[0]["LAST_INSERT_ID()"]);
   }
 ?>

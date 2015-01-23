@@ -188,6 +188,14 @@
     return $recipes;
   }
 
+  function get_recipe_profile_with_error($id, $error = "") {
+    $profile = get_recipe_profile($id)[0];
+    if (!empty($error)) {
+      $profile["error"] = $error;
+    }
+    return $profile;
+  }
+
   /**
    * Renders template, passing in values
   **/

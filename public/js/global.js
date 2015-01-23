@@ -95,6 +95,7 @@ var select = function(recipeId) {
     $("#" + recipeId).addClass("selected").css("background", "#ffccff")
                      .css("font-weight", "bold");
   }
+  showProfile(recipeId);
   showRecipeDetail(recipeId, recipeId < 0);
 };
 
@@ -511,20 +512,20 @@ var insertRecipe = function(validated) {
     url: "/recipe_insert.php",
     data: { recipe: validated },
     dataType: "json"
-  }).done(function(updated) {
-    if (typeof updated === typeof "") {
-      notify(updated);
+  }).done(function(insertId) {
+    if (typeof insertId === typeof "") {
+      notify(insertId);
       return;
     }
-    $("#recipe-ribbon-left").append("<p><span id='" + updated.id +
+    $("#recipe-ribbon-left").append("<p><span id='" + insertId +
       "' class='recipe-part recipe-name clickable pinnable'></span></p>");
-    $("#recipe-ribbon-right").append("<p><span name='" + updated.id +
+    $("#recipe-ribbon-right").append("<p><span name='" + insertId +
       "' class='recipe-part recipe-profile clickable'></span</p>");
-    initNameAndProfile("#" + updated.id, "#recipe-ribbon-right span:last");
-    loadUpdatedData(updated);
-    showProfile(updated.id);
-    select(updated.id);
-    notify("&check;");
+    initNameAndProfile("#" + insertId, "#recipe-ribbon-right span:last");
+    validated.id = insertId;
+    updateRecipe(validated);
+    showProfile(insertId);
+    select(insertId);
   });
 };
 
@@ -556,12 +557,12 @@ var updateRecipe = function(validated) {
     data: { recipe: validated },
     dataType: "json"
   }).done(function(updated) {
-    if (typeof updated === typeof "") {
-      notify(updated);
-      return;
+    if (updated.error) {
+      notify(updated.error);
+    } else {
+      notify("&check;");
     }
     loadUpdatedData(updated);
-    notify("&check;");
   });
 };
 

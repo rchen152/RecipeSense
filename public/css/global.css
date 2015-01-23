@@ -122,13 +122,13 @@ ul {
 .recipe-ribbon-part {
   width: 50%;
   position: relative;
-  padding-top: 55px;
-  padding-bottom: 55px;
+  padding-top: 52px;
+  padding-bottom: 52px;
   overflow: hidden;
 }
 
 #recipe-ribbon-left {
-  border-radius: 0 0 55px 55px;
+  border-radius: 0 0 52px 52px;
   text-align: right;
   float: left;
 }
@@ -166,9 +166,9 @@ ul {
   height: 80%;
   background: rgba(255, 182, 255, 0.4);
   position: fixed;
-  top: 55px;
-  border-radius: 55px;
-  padding-bottom: 55px;
+  top: 52px;
+  border-radius: 52px;
+  padding-bottom: 52px;
   overflow-x: hidden;
 }
 
@@ -222,7 +222,6 @@ ul {
 }
 
 #recipe-edittoggle {
-  margin-right: 1%;
   padding: 10px;
   border-radius: 0 0 10px 10px;
 }

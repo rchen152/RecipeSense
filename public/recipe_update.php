@@ -21,7 +21,8 @@
       $prep_time = $prep[0];
       $prep_time_unit_id = get_unit_id($prep[1], "time");
       if ($prep_time_unit_id < 0) {
-        echo json_encode("unrecognized time unit: ".$prep[1]);
+        echo json_encode(get_recipe_profile_with_error($_POST["recipe"]["id"],
+          "unrecognized time unit: ".$prep[1]));
         return;
       }
       $query_str .= "prep_time = ?, prep_time_unit_id = ?, ";
@@ -35,7 +36,8 @@
         $prep_time_active = $prep_active[0];
         $prep_time_active_unit_id = get_unit_id($prep_active[1], "time");
         if ($prep_time_active_unit_id < 0) {
-          echo json_encode("unrecognized active time unit: ".$prep_active[1]);
+          echo json_encode(get_recipe_profile_with_error($_POST["recipe"]["id"],
+            "unrecognized active time unit: ".$prep_active[1]));
           return;
         }
         $query_str .= "prep_time_active = ?, prep_time_active_unit_id = ?, ";
@@ -73,7 +75,8 @@
       $query_str = substr($query_str, 0, -2)." WHERE id = ?";
       $parameters[] = $_POST["recipe"]["id"];
       if (query($query_str, $parameters) === false) {
-        echo json_encode("profile update failure");
+        echo json_encode(get_recipe_profile_with_error($_POST["recipe"]["id"],
+          "profile update failure"));
         return;
       }
       $query_str = "";
@@ -89,7 +92,8 @@
       // If no ingredients, delete all
       if (!is_array($_POST["recipe"]["ingredients"])) {
         if (query($query_del, $param_del) === false) {
-          echo json_encode("ingredient delete failure");
+          echo json_encode(get_recipe_profile_with_error($_POST["recipe"]["id"],
+            "ingredient delete failure"));
           return;
         }
       } else {
@@ -110,15 +114,17 @@
             $id = get_ingredient_id($ingredient["description"]);
           }
           if ($id < 0) {
-            echo json_encode(
-              "unrecognized ingredient: ".$ingredient["description"]);
+            echo json_encode(get_recipe_profile_with_error(
+              $_POST["recipe"]["id"],
+              "unrecognized ingredient: ".$ingredient["description"]));
             return;
           }
 
           $group_id = get_recipe_ingredient_group_id($ingredient["group_name"]);
           if ($group_id < 0) {
-            echo json_encode(
-              "bad ingredient group: ".$ingredient["group_name"]);
+            echo json_encode(get_recipe_profile_with_error(
+              $_POST["recipe"]["id"],
+              "bad ingredient group: ".$ingredient["group_name"]));
           }
 
           // Quantity
@@ -139,14 +145,16 @@
 
         // Delete old ingredients
         if (query($query_del, $param_del) === false) {
-          echo json_encode("ingredient delete failure");
+          echo json_encode(get_recipe_profile_with_error($_POST["recipe"]["id"],
+            "ingredient delete failure"));
           return;
         }
 
         // Execute query
         $query_str = substr($query_str, 0, -2);
         if (query($query_str, $parameters) === false) {
-          echo json_encode("ingredient update failure");
+          echo json_encode(get_recipe_profile_with_error($_POST["recipe"]["id"],
+            "ingredient update failure"));
           return;
         }
         $query_str = "";
@@ -180,7 +188,8 @@
 
         // Execute query
         if (query($query_str, $parameters) === false) {
-          echo json_encode("instruction update failure");
+          echo json_encode(get_recipe_profile_with_error($_POST["recipe"]["id"],
+            "instruction update failure"));
           return;
         }
         $query_str = "";
@@ -192,12 +201,13 @@
         "number > ? AND recipe_id = ?";
       array_push($parameters, $max_number, $_POST["recipe"]["id"]);
       if (query($query_str, $parameters) === false) {
-        echo json_encode("instruction delete failure");
+        echo json_encode(get_recipe_profile_with_error($_POST["recipe"]["id"],
+          "instruction delete failure"));
         return;
       }
     }
 
     // Return updated profile
-    echo json_encode(get_recipe_profile($_POST["recipe"]["id"])[0]);
+    echo json_encode(get_recipe_profile_with_error($_POST["recipe"]["id"]));
   }
 ?>
