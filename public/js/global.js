@@ -9,7 +9,7 @@ $(document).ready(function() {
   $("#recipe-editupdate").click(function() {
     var validated = validateEdits();
     if (typeof validated === typeof "") {
-      notify(validated);
+      notify(validated, 1);
       return;
     }
     if ($("#recipe-full-title").attr("name") < 0) {
@@ -20,7 +20,7 @@ $(document).ready(function() {
   });
   $("#recipe-editdelete").click(function() {
     if ($("#recipe-full-title").attr("name") < 0) {
-      notify("nop");
+      notify("nop", 1);
     } else {
       $("#overlay-delete").show();
     }
@@ -298,7 +298,20 @@ var editModeOff = function() {
     $("#recipe-instructions-items-back").html());
 };
 
-var notify = function(msg) {
+var notify = function(msg, type) {
+  if (msg !== "&check;") {
+    switch (type) {
+      case 0:
+        msg = "ERROR " + msg;
+        break;
+      case 1:
+        msg = "ABORTED POST " + msg;
+        break;
+      case 2:
+        msg = "BAD POST " + msg;
+        break;
+    }
+  }
   $("#recipe-editnotice").hide().html(msg).show(200);
 }
 
@@ -320,7 +333,7 @@ var sanitizePaste = function(event) {
   } else if (window.clipboardData && window.clipboardData.getData) {
     text = window.clipboardData.getData("Text");
   } else {
-    notify("clipboard unavailable");
+    notify("clipboard unavailable", 0);
     return;
   }
 
@@ -356,7 +369,7 @@ var autocompleteIngredient = function() {
       replaceWithText(selection, range, ingredientPrefix);
       notify("&check;");
     } else {
-      notify("unknown ingredient prefix: " + prefix);
+      notify("unknown ingredient prefix: " + prefix, 0);
     }
   });
 };
@@ -396,7 +409,7 @@ var insertIngredient = function() {
     name: normalize($("#ingredient-insert-name").val())
   };
   if (!ingredient.name) {
-    notify("empty ingredient name");
+    notify("empty ingredient name", 1);
     return;
   }
   var plural = normalize($("#ingredient-insert-plural").val());
@@ -410,7 +423,7 @@ var insertIngredient = function() {
     data: { ingredient: ingredient },
     dataType: "json"
   }).done(function(status) {
-    notify(status);
+    notify(status, 2);
   });
 };
 
@@ -518,7 +531,7 @@ var insertRecipe = function(validated) {
     dataType: "json"
   }).done(function(insertId) {
     if (typeof insertId === typeof "") {
-      notify(insertId);
+      notify(insertId, 2);
       return;
     }
     $("#recipe-ribbon-left").append("<p><span id='" + insertId +
@@ -543,7 +556,7 @@ var deleteRecipe = function() {
     dataType: "json"
   }).done(function(deleteId) {
     if (isNaN(deleteId)) {
-      notify(deleteId);
+      notify(deleteId, 2);
       return;
     }
     $("#" + deleteId).remove();
@@ -563,7 +576,7 @@ var updateRecipe = function(validated) {
     dataType: "json"
   }).done(function(updated) {
     if (updated.error) {
-      notify(updated.error);
+      notify(updated.error, 2);
     } else {
       notify("&check;");
     }
@@ -575,7 +588,7 @@ var updateRecipe = function(validated) {
       dataType: "json"
     }).done(function(status) {
       if (allOk()) {
-        notify(status);
+        notify(status, 2);
       }
 
       $.ajax({
@@ -585,7 +598,7 @@ var updateRecipe = function(validated) {
         dataType: "json"
       }).done(function(status) {
         if (allOk()) {
-          notify(status);
+          notify(status, 2);
         }
         loadUpdatedData(updated);
       });
