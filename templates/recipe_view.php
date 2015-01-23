@@ -134,3 +134,23 @@
     ><span class="dialog-ingredient-insert clickable">No</span>
   </div></div>
 </div>
+<div id="overlay-edithelpme" class="overlay noface">
+  <div class="dialog-wrapper"><div class="dialog">
+    <span class="dialog-prompt title">About EditMode</span>
+    <span class="dialog-prompt subtitle">Update</span>
+    <ul>
+      <li>Adds a new recipe</li>
+      <li>Updates an existing recipe</li>
+    </ul>
+    <span class="dialog-prompt subtitle">Delete</span>
+    <ul><li>Deletes an existing recipe</li></ul>
+    <span class="dialog-prompt subtitle">Notifications</span>
+    <ul>
+      <li>&check;: All OK</li>
+      <li>ERROR: It's dead, Jim</li>
+      <li>ABORTED POST: Post not attempted</li>
+      <li>BAD POST: Post partially or completely failed</li>
+    </ul>
+    <span class="dialog-edithelpme clickable">OK</span>
+  </div></div>
+</div>

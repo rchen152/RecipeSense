@@ -102,6 +102,11 @@ ul {
   border-radius: 10px 10px 10px 10px;
 }
 
+.dialog ul {
+  margin: 0 20% 10px 20%;
+  text-align: left;
+}
+
 .dialog-prompt {
   margin-bottom: 10px;
   display: block;

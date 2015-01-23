@@ -5,6 +5,10 @@ $(document).ready(function() {
 
   initNameAndProfile(".recipe-name", ".recipe-profile");
 
+  $("#recipe-edithelpme").click(function() {
+    $("#overlay-edithelpme").show();
+  });
+  $(".dialog-edithelpme").click(function() {$("#overlay-edithelpme").hide(); });
   $("#recipe-edittoggle").click(toggleEditMode);
   $("#recipe-editupdate").click(function() {
     var validated = validateEdits();
@@ -369,7 +373,7 @@ var autocompleteIngredient = function() {
       replaceWithText(selection, range, ingredientPrefix);
       notify("&check;");
     } else {
-      notify("unknown ingredient prefix: " + prefix, 0);
+      notify("unknown ingredient prefix: " + prefix, 2);
     }
   });
 };
