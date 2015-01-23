@@ -302,6 +302,10 @@ var notify = function(msg) {
   $("#recipe-editnotice").hide().html(msg).show(200);
 }
 
+var allOk = function() {
+  return $("#recipe-editnotice").html().length < 2;
+}
+
 var sanitizePaste = function(event) {
   if (event.preventDefault) {
     event.preventDefault();
@@ -379,6 +383,7 @@ var commonPrefix = function(ingredients) {
 };
 
 /******** INGREDIENT INSERT ********/
+
 var showIngredientInsertDialog = function() {
   $("#overlay-ingredient-insert").show();
   var ingredient = normalize(window.getSelection().toString());
@@ -529,6 +534,7 @@ var insertRecipe = function(validated) {
 };
 
 /******** RECIPE DELETE ********/
+
 var deleteRecipe = function() {
   $.ajax({
     type: "POST",
@@ -552,7 +558,7 @@ var deleteRecipe = function() {
 var updateRecipe = function(validated) {
   $.ajax({
     type: "POST",
-    url: "/recipe_update.php",
+    url: "/recipe_profile_update.php",
     data: { recipe: validated },
     dataType: "json"
   }).done(function(updated) {
@@ -561,7 +567,29 @@ var updateRecipe = function(validated) {
     } else {
       notify("&check;");
     }
-    loadUpdatedData(updated);
+
+    $.ajax({
+      type: "POST",
+      url: "/recipe_ingredients_update.php",
+      data: { recipe: validated },
+      dataType: "json"
+    }).done(function(status) {
+      if (allOk()) {
+        notify(status);
+      }
+
+      $.ajax({
+        type: "POST",
+        url: "/recipe_instructions_update.php",
+        data: { recipe: validated },
+        dataType: "json"
+      }).done(function(status) {
+        if (allOk()) {
+          notify(status);
+        }
+        loadUpdatedData(updated);
+      });
+    });
   });
 };
 
