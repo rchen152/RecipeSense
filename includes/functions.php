@@ -2,25 +2,6 @@
   require_once("constants.php");
 
   /**
-   * Escapes special characters to safely display in HTML
-  **/
-  function escape_html($str) {
-    if (!isset($_SESSION["html_chars"])) {
-      $_SESSION["html_chars"] = array(
-        "&" => "&amp;",
-        "<" => "&lt;",
-        ">" => "&gt;",
-        "'" => "&apos;",
-        '"' => "&quot;"
-      );
-    }
-    foreach (array_keys($_SESSION["html_chars"]) as $html_char) {
-      $str = str_replace($html_char, $_SESSION["html_chars"][$html_char], $str);
-    }
-    return $str;
-  }
-
-  /**
    * Executes SQL statement, possibly with parameters, returning an array of all
    * rows in result set or false on (non-fatal) error.
   **/
@@ -155,31 +136,36 @@
     foreach ($recipes_query as $recipe_query) {
       $recipe = array();
 
-      $recipe["id"] = escape_html($recipe_query["id"]);
-      $recipe["name"] = escape_html($recipe_query["name"]);
+      $recipe["id"] = htmlspecialchars($recipe_query["id"], ENT_QUOTES);
+      $recipe["name"] = htmlspecialchars($recipe_query["name"], ENT_QUOTES);
 
       $recipe["profile"] = "";
 
-      $recipe["prep_time"] = escape_html($recipe_query["prep_time"]." ".
-  	$recipe_query["unit"]);
-      $recipe["profile"] .= "&compfn;&ensp;".escape_html($recipe["prep_time"]);
+      $recipe["prep_time"] = htmlspecialchars($recipe_query["prep_time"]." ".
+  	$recipe_query["unit"], ENT_QUOTES);
+      $recipe["profile"] .= "&compfn;&ensp;".
+        htmlspecialchars($recipe["prep_time"], ENT_QUOTES);
       if (isset($recipe_query["prep_time_active"])) {
-        $recipe["prep_time_active"] = escape_html(
-          $recipe_query["prep_time_active"]." ".$recipe_query["unit_active"]);
+        $recipe["prep_time_active"] = htmlspecialchars(
+          $recipe_query["prep_time_active"]." ".$recipe_query["unit_active"],
+          ENT_QUOTES);
       }
 
       $recipe["profile"] .= "&emsp;&compfn;&ensp;";
-      $recipe["serving_number"] = escape_html($recipe_query["serving_number"]);
+      $recipe["serving_number"] = htmlspecialchars(
+      $recipe_query["serving_number"], ENT_QUOTES);
       $calories = round($recipe_query["calories"], 2);
-      $recipe["calories"] = escape_html($calories);
+      $recipe["calories"] = htmlspecialchars($calories, ENT_QUOTES);
       if ($recipe_query["serving_number"] != 1) {
-        $recipe["profile"] .= escape_html($recipe_query["serving_number"]).
+        $recipe["profile"] .= htmlspecialchars($recipe_query["serving_number"],
+        ENT_QUOTES).
           " &times; ";
       }
       $recipe["profile"] .= $recipe["calories"]." cal";
 
       if (isset($recipe_query["serving_note"])) {
-        $recipe["serving_note"] = escape_html($recipe_query["serving_note"]);
+        $recipe["serving_note"] = htmlspecialchars(
+          $recipe_query["serving_note"], ENT_QUOTES);
       }
 
       $recipes[] = $recipe;
