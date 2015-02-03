@@ -534,7 +534,7 @@ var insertRecipe = function(validated) {
     data: { recipe: validated },
     dataType: "json"
   }).done(function(insertId) {
-    if (typeof insertId === typeof "") {
+    if (isNaN(insertId)) {
       notify(insertId, 2);
       return;
     }
